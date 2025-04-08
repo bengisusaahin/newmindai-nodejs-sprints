@@ -1,8 +1,25 @@
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
 
 const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Hello, NewMindAi! Node.js server is working');
+  let filePath = './public/index.html';
+
+  if (req.url === '/products') {
+    filePath = './public/products.html';
+  } else if (req.url === '/contact') {
+    filePath = './public/contact.html';
+  }
+
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(404);
+      res.end('Sayfa bulunamadı');
+    } else {
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(data);
+    }
+  });
 });
 
 const PORT = 3000;
