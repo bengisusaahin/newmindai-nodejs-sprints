@@ -20,5 +20,8 @@
   "homepage": "https://gitlab.com/bengisusaahin/nodejs-s1-proje#readme",
   "devDependencies": {
     "nodemon": "^3.1.9"
+  },
+  "dependencies": {
+    "open": "^10.1.0"
   }
 }

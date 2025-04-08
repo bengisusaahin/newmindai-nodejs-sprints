@@ -23,7 +23,15 @@ const server = http.createServer((req, res) => {
 });
 
 const PORT = 3000;
+const open = (...args) => import('open').then(m => m.default(...args));
 
 server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
+  open(`http://localhost:${PORT}`)
+    .then(() => {
+      console.log('Browser opened.');
+    })
+    .catch((err) => {
+      console.error('Browser can not open:', err);
+    });
 });
