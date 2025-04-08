@@ -3,12 +3,12 @@ const fs = require('fs');
 const path = require('path');
 
 const server = http.createServer((req, res) => {
-  let filePath = './public/index.html';
+    let filePath = path.join(__dirname, 'public', 'index.html');
 
   if (req.url === '/products') {
-    filePath = './public/products.html';
+    filePath = path.join(__dirname, 'public', 'products.html');
   } else if (req.url === '/contact') {
-    filePath = './public/contact.html';
+    filePath = path.join(__dirname, 'public', 'contact.html');
   }
 
   fs.readFile(filePath, (err, data) => {
