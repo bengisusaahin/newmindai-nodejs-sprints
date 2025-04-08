@@ -1,0 +1,24 @@
+{
+  "name": "nodejs-s1-proje",
+  "version": "1.0.0",
+  "description": "- NodeJS HTTP modülü kullanarak yeni bir web server package oluştur.\r - `nodemon` kütüphanesini ekle\r - `package.json` içerisine `dev` komutu ekle. Proje `npm run dev` komutu ile nodemon tarafından çalıştırılmalı.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/bengisusaahin/nodejs-s1-proje.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/bengisusaahin/nodejs-s1-proje/issues"
+  },
+  "homepage": "https://gitlab.com/bengisusaahin/nodejs-s1-proje#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
