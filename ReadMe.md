@@ -1,51 +1,55 @@
-# Sprint 1 Proje Çalışması
+# Node.js Sprint 1 Project – Basic HTTP Server
 
-## Task 1: Project Setup
+This is a simple yet cleanly structured Node.js project built using the native `http` module.  
+It serves static HTML pages and provides several API endpoints powered by JSON data.
 
-- NodeJS HTTP modülü kullanarak yeni bir web server package oluştur.
-- `nodemon` kütüphanesini ekle
-- `package.json` içerisine `dev` komutu ekle. Proje `npm run dev` komutu ile nodemon tarafından çalıştırılmalı.
+---
 
-## Task 2: HTML Pages
+## 🚀 Features
 
-Uygulamada 3 tane HTML sayfası olmalı
+- Built with pure Node.js (no frameworks)
+- Serves static HTML pages (`index`, `products`, `contact`)
+- API endpoints using local JSON file (`employeeList.json`)
+- Modular and clean route handling
+- Auto-opens browser on server start (`open` module)
+- Implements **Atomic Commits** with **Semantic Commit Messages**
 
-1. Ana Sayfa (index.html) <br />
+---
 
-- Uygulama ilk açıldığında bu sayfa gelmeli [http://localhost:3000](http://localhost:3000/)
-- [Ana Sayfa](http://localhost:3000/) | [Ürünler](http://localhost:3000/products) | [İletişim](http://localhost:3000/connect) linklerinden oluşan bir header menüsü olmalı (stillendirme önemli değil ve bu menü tüm sayfalarda olmalı)
-  - Ana Sayfa: http://localhost:3000/
-  - Ürünler: http://localhost:3000/products
-  - İletişim: http://localhost:3000/connect
-- İçerik olarak dummy conent eklenebilir.
+## 🔧 Installation
 
-2. Ürünler (products.html)
+```bash
+npm install
+npm run dev
+```
 
-- Products URLi products.html sayfasını getirmeli [http://localhost:3000/products](http://localhost:3000/products)
-- [Ana Sayfa](http://localhost:3000/) | [Ürünler](http://localhost:3000/products) | [İletişim](http://localhost:3000/connect) linklerinden oluşan bir header menüsü olmalı (stillendirme önemli değil ve bu menü tüm sayfalarda olmalı)
-- İçerik olarak dummy conent eklenebilir.
+> Make sure you have nodemon installed globally or as a dev dependency.
 
-3. İletişim (contact.html)
+---
 
-- Contact URLi contact.html sayfasını getirmeli [http://localhost:3000/contact](http://localhost:3000/contact)
-- [Ana Sayfa](http://localhost:3000/) | [Ürünler](http://localhost:3000/products) | [İletişim](http://localhost:3000/connect) linklerinden oluşan bir header menüsü olmalı (stillendirme önemli değil ve bu menü tüm sayfalarda olmalı)
-- İçerik olarak dummy conent eklenebilir.
+##  Commit Strategy
 
-## Task 3: API Endpoints ⚡
+This project follows:
 
-Bu görevde `employeeList.json` dosyası içerisindeki datalar kullanılacak. Aşağıda belirtilen endpointlere istek atıldığı zaman `JSON` formatında data dönülmesi gerekiyor.
+- **Atomic Commits**  
+  Each commit introduces a single, meaningful change.
 
-1. [http://localhost:3000/employeeList](http://localhost:3000/employeeList) <br />
-   Tüm listeyi maaş bilgisi olmadan `JSON` formatında döndürmeli.
+- **Semantic Commit Messages**  
+  Examples used in this project:
+  - `feat: add /oldestEmployee API endpoint`
+  - `refactor: modularize API route handling`
+  - `fix: handle invalid JSON gracefully`
 
-2. [http://localhost:3000/oldestEmployee](http://localhost:3000/oldestEmployee) <br />
-   En kıdemli çalışan bilgisini `JSON` formatında döndürmeli.
+> This strategy improves collaboration, code review, and readability of the project history.
+## Contact
 
-3. [http://localhost:3000/averageSalary](http://localhost:3000/averageSalary) <br />
-   Çalışanların maaş ortalaması bilgisini döndürmeli.
-
-## Task 4: Push to GitLab
-
-- Yapılan tüm çalışmalar kişisel GitLab hesabınızda remote repository ye yüklenmeli.
-
-**☝ RULE:** Yapılan herbir minor değişiklik ayrı ayrı commitlenmeli
+<table style="border-collapse: collapse; width: 100%;">
+  <tr>
+    <td style="padding-right: 10px;">Bengisu Şahin - <a href="mailto:bengisusaahin@gmail.com">bengisusaahin@gmail.com</a></td>
+    <td>
+      <a href="https://www.linkedin.com/in/bengisu-sahin/" target="_blank">
+        <img src="https://img.shields.io/badge/linkedin-%231E77B5.svg?&style=for-the-badge&logo=linkedin&logoColor=white" alt="linkedin" style="vertical-align: middle;" />
+      </a>
+    </td>
+  </tr>
+</table>
