@@ -3,10 +3,15 @@ const fs = require('fs');
 const path = require('path');
 
 const server = http.createServer((req, res) => {
-  if (req.url.startsWith('/employee')) {
-    handleApiRoutes(req, res);
-  } else {
-    handleHtmlRoutes(req, res);
+  switch (req.url) {
+    case '/employeeList':
+    case '/oldestEmployee':
+    case '/averageSalary':
+      handleApiRoutes(req, res);
+      break;
+
+    default:
+      handleHtmlRoutes(req, res);
   }
 });
 
@@ -33,29 +38,46 @@ function handleHtmlRoutes(req, res) {
 function handleApiRoutes(req, res) {
   const filePath = path.join(__dirname, 'data', 'employeeList.json');
 
-  if (req.url === '/employeeList') {
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) {
-        res.writeHead(500);
-        res.end(JSON.stringify({ error: 'Internal Server Error' }));
-        return;
-      }
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      res.writeHead(500);
+      res.end(JSON.stringify({ error: 'Internal Server Error' }));
+      return;
+    }
 
-      try {
-        const parsedList = JSON.parse(data);
-        const employeesWithoutSalary = parsedList.map(({ maas, ...rest }) => rest);
+    try {
+      const parsedList = JSON.parse(data);
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(employeesWithoutSalary));
-      } catch (parseError) {
-        res.writeHead(500);
-        res.end(JSON.stringify({ error: 'Invalid JSON format' }));
+      switch (req.url) {
+        case '/employeeList':
+          return handleEmployeeList(res, parsedList);
+
+        case '/oldestEmployee':
+          return handleOldestEmployee(res, parsedList);
+
+        default:
+          res.writeHead(404);
+          res.end(JSON.stringify({ error: 'API endpoint not found' }));
       }
-    });
-  } else {
-    res.writeHead(404);
-    res.end(JSON.stringify({ error: 'API endpoint not found' }));
-  }
+    } catch (parseError) {
+      res.writeHead(500);
+      res.end(JSON.stringify({ error: 'Invalid JSON format' }));
+    }
+  });
+}
+
+function handleEmployeeList(res, parsedList) {
+  const employeesWithoutSalary = parsedList.map(({ maas, ...rest }) => rest);
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(employeesWithoutSalary));
+}
+
+function handleOldestEmployee(res, parsedList) {
+  const oldest = parsedList.reduce((a, b) =>
+    new Date(a.ise_giris_tarihi) < new Date(b.ise_giris_tarihi) ? a : b
+  );
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(oldest));
 }
 
 const PORT = 3000;
