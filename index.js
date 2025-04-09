@@ -40,8 +40,7 @@ function handleApiRoutes(req, res) {
 
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
-      res.writeHead(500);
-      res.end(JSON.stringify({ error: 'Internal Server Error' }));
+      sendJson(res, { error: 'Internal Server Error' }, 500);
       return;
     }
 
@@ -59,35 +58,35 @@ function handleApiRoutes(req, res) {
           return handleAverageSalary(res, parsedList);
 
         default:
-          res.writeHead(404);
-          res.end(JSON.stringify({ error: 'API endpoint not found' }));
+          sendJson(res, { error: 'API endpoint not found' }, 404);
       }
     } catch (parseError) {
-      res.writeHead(500);
-      res.end(JSON.stringify({ error: 'Invalid JSON format' }));
+      sendJson(res, { error: 'Invalid JSON format' }, 500);
     }
   });
 }
 
 function handleEmployeeList(res, parsedList) {
   const employeesWithoutSalary = parsedList.map(({ maas, ...rest }) => rest);
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(employeesWithoutSalary));
+  sendJson(res, employeesWithoutSalary);
 }
 
 function handleOldestEmployee(res, parsedList) {
   const oldest = parsedList.reduce((a, b) =>
     new Date(a.ise_giris_tarihi) < new Date(b.ise_giris_tarihi) ? a : b
   );
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(oldest));
+  sendJson(res, oldest);
 }
 
 function handleAverageSalary(res, parsedList) {
   const totalSalary = parsedList.reduce((sum, { maas }) => sum + maas, 0);
   const averageSalary = (totalSalary / parsedList.length).toFixed(2);
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({ averageSalary }));
+  sendJson(res, { averageSalary }); 
+}
+
+function sendJson(res, data, statusCode = 200) {
+  res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(data));
 }
 
 const PORT = 3000;
