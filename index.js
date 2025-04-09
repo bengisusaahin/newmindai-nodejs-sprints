@@ -55,6 +55,9 @@ function handleApiRoutes(req, res) {
         case '/oldestEmployee':
           return handleOldestEmployee(res, parsedList);
 
+        case '/averageSalary':
+          return handleAverageSalary(res, parsedList);
+
         default:
           res.writeHead(404);
           res.end(JSON.stringify({ error: 'API endpoint not found' }));
@@ -78,6 +81,13 @@ function handleOldestEmployee(res, parsedList) {
   );
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify(oldest));
+}
+
+function handleAverageSalary(res, parsedList) {
+  const totalSalary = parsedList.reduce((sum, { maas }) => sum + maas, 0);
+  const averageSalary = (totalSalary / parsedList.length).toFixed(2);
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ averageSalary }));
 }
 
 const PORT = 3000;
