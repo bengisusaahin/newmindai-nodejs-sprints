@@ -72,10 +72,10 @@ function handleEmployeeList(res, parsedList) {
 }
 
 function handleOldestEmployee(res, parsedList) {
-  const oldest = parsedList.reduce((a, b) =>
-    new Date(a.ise_giris_tarihi) < new Date(b.ise_giris_tarihi) ? a : b
+  const oldestEmployee = parsedList.reduce((oldest, current) =>
+    new Date(oldest.ise_giris_tarihi) < new Date(current.ise_giris_tarihi) ? oldest : current
   );
-  sendJson(res, oldest);
+  sendJson(res, oldestEmployee);
 }
 
 function handleAverageSalary(res, parsedList) {
