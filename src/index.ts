@@ -2,7 +2,7 @@ import http, { IncomingMessage, ServerResponse } from 'http';
 import fs from 'fs';
 import path from 'path';
 import { ApiResponse, Employee, EmployeeWithoutSalary } from './lib/types';
-import { ReqTypes } from './lib/contants';
+import { ReqTypes } from './lib/constants';
 
 const server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
   
@@ -64,7 +64,7 @@ function handleApiRoutes(req: IncomingMessage, res: ServerResponse) : void {
           sendJson(res, { success: false, data: null, error: 'API endpoint not found' }, 404);
       }
     } catch (parseError) {
-      sendJson(res, { success: false, data: null, error: 'API endpoint not found' }, 500);
+      sendJson(res, { success: false, data: null, error: 'Internal Server Error' }, 500);
     }
   });
 }
