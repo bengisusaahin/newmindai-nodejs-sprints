@@ -1,23 +1,25 @@
 import http, { IncomingMessage, ServerResponse } from 'http';
 import fs from 'fs';
 import path from 'path';
-import { ApiResponse, Employee } from './lib/types';
+import { ApiResponse, Employee, EmployeeWithoutSalary } from './lib/types';
+import { ReqTypes } from './lib/contants';
 
 const server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
-  switch (req.url) {
-    case '/employeeList':
-    case '/oldestEmployee':
-    case '/averageSalary':
-      handleApiRoutes(req, res);
-      break;
+  
+  const method = req.method as ReqTypes | undefined;
 
-    default:
-      handleHtmlRoutes(req, res);
+  if (method === ReqTypes.GET && req.url?.startsWith('/api')) {
+    handleApiRoutes(req, res);
+  } else if (req.method === ReqTypes.GET) {
+    handleHtmlRoutes(req, res);
+  } else {
+    res.writeHead(405); 
+    res.end('Method Not Allowed');
   }
 });
 
 function handleHtmlRoutes(req: IncomingMessage, res: ServerResponse) : void {
-  let filePath = path.join(__dirname, '..', 'public', 'index.html');
+  let filePath: string = path.join(__dirname, '..', 'public', 'index.html');
 
   if (req.url === '/products') {
     filePath = path.join(__dirname, '..', 'public', 'products.html');
@@ -37,7 +39,7 @@ function handleHtmlRoutes(req: IncomingMessage, res: ServerResponse) : void {
 }
 
 function handleApiRoutes(req: IncomingMessage, res: ServerResponse) : void {
-  const filePath = path.join(__dirname, '..', 'public', 'data', 'employeeList.json');
+  const filePath: string = path.join(__dirname, '..', 'public', 'data', 'employeeList.json');
 
   fs.readFile(filePath, 'utf8', (err, data) => {
     if (err) {
@@ -46,16 +48,16 @@ function handleApiRoutes(req: IncomingMessage, res: ServerResponse) : void {
     }
 
     try {
-      const parsedList = JSON.parse(data);
+      const parsedList: Employee[] = JSON.parse(data);
 
       switch (req.url) {
-        case '/employeeList':
+        case '/api/employeeList':
           return handleEmployeeList(res, parsedList);
 
-        case '/oldestEmployee':
+        case '/api/oldestEmployee':
           return handleOldestEmployee(res, parsedList);
 
-        case '/averageSalary':
+        case '/api/averageSalary':
           return handleAverageSalary(res, parsedList);
 
         default:
@@ -68,34 +70,34 @@ function handleApiRoutes(req: IncomingMessage, res: ServerResponse) : void {
 }
 
 function handleEmployeeList(res: ServerResponse, parsedList:Employee[]): void {
-  const employeesWithoutSalary = parsedList.map(({ maas, ...rest }) => rest);
+  const employeesWithoutSalary: EmployeeWithoutSalary[] = parsedList.map(({ maas, ...rest }) => rest);
 
-  const response: ApiResponse<Omit<Employee, 'maas'>[]> = {
+  const response: ApiResponse<EmployeeWithoutSalary[]> = {
     success: true,
-    data: employeesWithoutSalary,
+    data: employeesWithoutSalary
   };
 
   sendJson(res, response);
 }
 
 function handleOldestEmployee(res: ServerResponse, parsedList: Employee[]) : void {
-  const oldestEmployee = parsedList.reduce((oldest, current) =>
+  const oldestEmployee: Employee = parsedList.reduce((oldest, current) =>
     new Date(oldest.ise_giris_tarihi) < new Date(current.ise_giris_tarihi) ? oldest : current
   );
   const response: ApiResponse<Employee> = {
     success: true,
-    data: oldestEmployee,
+    data: oldestEmployee
   };
   sendJson(res, response);
 }
 
 function handleAverageSalary(res: ServerResponse, parsedList: Employee[]) : void {
-  const totalSalary = parsedList.reduce((sum, { maas }) => sum + maas, 0);
-  const averageSalary = Number((totalSalary / parsedList.length).toFixed(2));
+  const totalSalary: number = parsedList.reduce((sum, { maas }) => sum + maas, 0);
+  const averageSalary: number = totalSalary / parsedList.length;
 
-  const response: ApiResponse<{average: number}> = {
+  const response: ApiResponse<{averageSalary: number}> = {
     success: true,
-    data: { average: averageSalary },
+    data: {averageSalary }
   };
   sendJson(res, response); 
 }
@@ -105,7 +107,7 @@ function sendJson<T>(res: ServerResponse, data: ApiResponse<T>, statusCode: numb
   res.end(JSON.stringify(data));
 }
 
-const PORT = 3000;
+const PORT: number = 3000;
 const open = (url: string, options?: object) => import('open').then((m) => m.default(url, options));
 
 server.listen(PORT, () => {

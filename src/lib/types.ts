@@ -7,8 +7,10 @@ export type Employee = {
     maas: number;
   };
 
+  export type EmployeeWithoutSalary = Omit<Employee, 'maas'>;
+
   export type ApiResponse<T> = {
     success: boolean;
-    data: T;
-    error?: string | undefined;
+    data?: T;
+    error?: string;
   };
