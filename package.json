@@ -21,12 +21,14 @@
   },
   "homepage": "https://gitlab.com/bengisusaahin/nodejs-s1-proje#readme",
   "devDependencies": {
+    "@types/axios": "^0.9.36",
     "@types/node": "^22.14.1",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "axios": "^1.8.4",
     "open": "^10.1.0"
   }
 }

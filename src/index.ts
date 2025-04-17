@@ -1,8 +1,9 @@
 import http, { IncomingMessage, ServerResponse } from 'http';
 import fs from 'fs';
 import path from 'path';
-import { ApiResponse, Employee, EmployeeWithoutSalary } from './lib/types';
+import { ApiResponse, Employee, EmployeeWithoutSalary, Product } from './lib/types';
 import { ReqTypes } from './lib/constants';
+import { fetchProducts } from './lib/fetchProducts';
 
 const server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
   
@@ -59,6 +60,9 @@ function handleApiRoutes(req: IncomingMessage, res: ServerResponse) : void {
 
         case '/api/averageSalary':
           return handleAverageSalary(res, parsedList);
+        
+        case '/api/top100products':
+          return handleTop100Products(res);
 
         default:
           sendJson(res, { success: false, data: null, error: 'API endpoint not found' }, 404);
@@ -100,6 +104,26 @@ function handleAverageSalary(res: ServerResponse, parsedList: Employee[]) : void
     data: {averageSalary }
   };
   sendJson(res, response); 
+}
+
+function handleTop100Products(res: ServerResponse) : void {
+
+  fetchProducts()
+    .then((allProducts) => {
+      const response: ApiResponse<Product[]> = {
+        success: true,
+        data: allProducts
+      };
+      sendJson(res, response);
+    })
+    .catch((error: unknown) => {
+      const errMessage = error instanceof Error ? error.message : 'Unknown error';
+      sendJson(res, {
+        success: false,
+        data: null,
+        error: `Product fetch failed: ${errMessage}`
+      }, 500);
+    });
 }
 
 function sendJson<T>(res: ServerResponse, data: ApiResponse<T>, statusCode: number = 200) : void{
