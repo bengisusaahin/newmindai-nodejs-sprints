@@ -25,9 +25,19 @@ export type Product = {
   category_id: number;
   rating: number;
   sell_count: number;
-  images: {
-    url: string;
-    index: number;
-  }[];
+  images: ProductImage[];
 };
+
+export type ProductImage = {
+  url: string;
+  index: number;
+};
+
+export type ProductApiResponse = {
+  total: number;
+  products: Product[];
+}
+
+export interface ProductResponse extends ApiResponse<Product[]> {}
+
 

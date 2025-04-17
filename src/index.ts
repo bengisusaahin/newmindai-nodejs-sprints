@@ -1,12 +1,12 @@
 import http, { IncomingMessage, ServerResponse } from 'http';
 import fs from 'fs';
 import path from 'path';
-import { ApiResponse, Employee, EmployeeWithoutSalary, Product } from './lib/types';
+import { ApiResponse, Employee, EmployeeWithoutSalary, Product, ProductResponse } from './lib/types';
 import { ReqTypes } from './lib/constants';
 import { fetchProducts } from './lib/fetchProducts';
 
 const server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
-  
+
   const method = req.method as ReqTypes | undefined;
 
   if (method === ReqTypes.GET && req.url?.startsWith('/api')) {
@@ -14,12 +14,12 @@ const server = http.createServer((req: IncomingMessage, res: ServerResponse) => 
   } else if (req.method === ReqTypes.GET) {
     handleHtmlRoutes(req, res);
   } else {
-    res.writeHead(405); 
+    res.writeHead(405);
     res.end('Method Not Allowed');
   }
 });
 
-function handleHtmlRoutes(req: IncomingMessage, res: ServerResponse) : void {
+function handleHtmlRoutes(req: IncomingMessage, res: ServerResponse): void {
   let filePath: string = path.join(__dirname, '..', 'public', 'index.html');
 
   if (req.url === '/products') {
@@ -39,7 +39,7 @@ function handleHtmlRoutes(req: IncomingMessage, res: ServerResponse) : void {
   });
 }
 
-function handleApiRoutes(req: IncomingMessage, res: ServerResponse) : void {
+function handleApiRoutes(req: IncomingMessage, res: ServerResponse): void {
   const filePath: string = path.join(__dirname, '..', 'public', 'data', 'employeeList.json');
 
   fs.readFile(filePath, 'utf8', (err, data) => {
@@ -60,7 +60,7 @@ function handleApiRoutes(req: IncomingMessage, res: ServerResponse) : void {
 
         case '/api/averageSalary':
           return handleAverageSalary(res, parsedList);
-        
+
         case '/api/top100products':
           return handleTop100Products(res);
 
@@ -73,7 +73,7 @@ function handleApiRoutes(req: IncomingMessage, res: ServerResponse) : void {
   });
 }
 
-function handleEmployeeList(res: ServerResponse, parsedList:Employee[]): void {
+function handleEmployeeList(res: ServerResponse, parsedList: Employee[]): void {
   const employeesWithoutSalary: EmployeeWithoutSalary[] = parsedList.map(({ maas, ...rest }) => rest);
 
   const response: ApiResponse<EmployeeWithoutSalary[]> = {
@@ -84,7 +84,7 @@ function handleEmployeeList(res: ServerResponse, parsedList:Employee[]): void {
   sendJson(res, response);
 }
 
-function handleOldestEmployee(res: ServerResponse, parsedList: Employee[]) : void {
+function handleOldestEmployee(res: ServerResponse, parsedList: Employee[]): void {
   const oldestEmployee: Employee = parsedList.reduce((oldest, current) =>
     new Date(oldest.ise_giris_tarihi) < new Date(current.ise_giris_tarihi) ? oldest : current
   );
@@ -95,38 +95,38 @@ function handleOldestEmployee(res: ServerResponse, parsedList: Employee[]) : voi
   sendJson(res, response);
 }
 
-function handleAverageSalary(res: ServerResponse, parsedList: Employee[]) : void {
+function handleAverageSalary(res: ServerResponse, parsedList: Employee[]): void {
   const totalSalary: number = parsedList.reduce((sum, { maas }) => sum + maas, 0);
   const averageSalary: number = totalSalary / parsedList.length;
 
-  const response: ApiResponse<{averageSalary: number}> = {
+  const response: ApiResponse<{ averageSalary: number }> = {
     success: true,
-    data: {averageSalary }
+    data: { averageSalary }
   };
-  sendJson(res, response); 
+  sendJson(res, response);
 }
 
-function handleTop100Products(res: ServerResponse) : void {
+function handleTop100Products(res: ServerResponse): void {
 
   fetchProducts()
     .then((allProducts) => {
-      const response: ApiResponse<Product[]> = {
+      const response: ProductResponse = {
         success: true,
         data: allProducts
       };
-      sendJson(res, response);
+      sendJson<Product[]>(res, response);
     })
     .catch((error: unknown) => {
       const errMessage = error instanceof Error ? error.message : 'Unknown error';
-      sendJson(res, {
+      const errorResponse: ProductResponse = {
         success: false,
-        data: null,
         error: `Product fetch failed: ${errMessage}`
-      }, 500);
+      };
+      sendJson(res, errorResponse, 500);
     });
 }
 
-function sendJson<T>(res: ServerResponse, data: ApiResponse<T>, statusCode: number = 200) : void{
+function sendJson<T>(res: ServerResponse, data: ApiResponse<T>, statusCode: number = 200): void {
   res.writeHead(statusCode, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify(data));
 }
