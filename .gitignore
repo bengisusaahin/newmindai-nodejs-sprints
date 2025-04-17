@@ -1,2 +1,11 @@
+# build
 dist/
+
+# node dependencies
 node_modules/
+
+# logs
+*.log
+
+# secrets
+.env

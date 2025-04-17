@@ -4,6 +4,9 @@ import path from 'path';
 import { ApiResponse, Employee, EmployeeWithoutSalary, Product, ProductResponse } from './lib/types';
 import { ReqTypes } from './lib/constants';
 import { fetchProducts } from './lib/fetchProducts';
+import { fetchWeather } from './lib/weather';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const server = http.createServer((req: IncomingMessage, res: ServerResponse) => {
 
@@ -64,6 +67,9 @@ function handleApiRoutes(req: IncomingMessage, res: ServerResponse): void {
         case '/api/top100products':
           return handleTop100Products(res);
 
+        case '/api/how-is-your-weather':
+          return handleWeather(res, req);
+
         default:
           sendJson(res, { success: false, data: null, error: 'API endpoint not found' }, 404);
       }
@@ -123,6 +129,22 @@ function handleTop100Products(res: ServerResponse): void {
         error: `Product fetch failed: ${errMessage}`
       };
       sendJson(res, errorResponse, 500);
+    });
+}
+
+function handleWeather(res: ServerResponse, req: IncomingMessage): void {
+  fetchWeather(req)
+    .then((weatherResponse) => {
+      const statusCode = weatherResponse.success ? 200 : 500;
+      sendJson(res, weatherResponse, statusCode);
+    })
+    .catch((error: unknown) => {
+      const errMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      sendJson(res, {
+        success: false,
+        error: `Unexpected error: ${errMessage}`,
+      }, 500);
     });
 }
 

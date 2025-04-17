@@ -38,6 +38,22 @@ export type ProductApiResponse = {
   products: Product[];
 }
 
-export interface ProductResponse extends ApiResponse<Product[]> {}
+export interface ProductResponse extends ApiResponse<Product[]> { }
 
+export type WeatherData = {
+  city: string;
+  temperature: number;
+  condition: string;
+};
 
+export interface WeatherApiResponse extends ApiResponse<WeatherData> { }
+
+export type WeatherApiRawResponse = {
+  name: string;
+  main: {
+    temp: number;
+  };
+  weather: {
+    main: string;
+  }[];
+};
